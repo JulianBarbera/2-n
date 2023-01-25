@@ -1,127 +1,108 @@
 #include "tile.h"
-tile::tile() {}
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
+#include <SDL2/SDL_ttf.h>
+#include <string>
 
-tile::tile(SDL_Renderer *renderer, int x, int y) {
+tile::tile() {} // This guy is just used to create an empty object
+
+tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y) {
+
   this->renderer = renderer;
   value = 0;
-  width = (options::screenWidth - 20) / options::tiles - 10;
-  height = (options::screenHeight - 20) / options::tiles - 10;
+  // Tile size = (screen size - outer padding) / #tiles - tile padding
+  width = (options::screenWidth - 50) / options::tiles - 10;
+  height = (options::screenHeight - 50) / options::tiles - 10;
 
   this->x = x;
   this->y = y;
-  xPos = 10 + x * width + x * 10 + 10 / 2;
-  yPos = 10 + y * height + y * 10 + 10 / 2;
+  // Left outer padding + #x * tile width + #tile * tile padding + offset
+  xPos = 25 + x * width + x * 10 + 5;
+  yPos = 25 + y * height + y * 10 + 25;
   color = colors::black;
-
+  textColor = colors::white;
+  this->font = font;
   fillRect = {xPos, yPos, width, height};
-}
-
-tile::tile(SDL_Renderer *renderer) {
-  this->renderer = renderer;
-  value = 0;
-  width = (options::screenWidth - 20) / options::tiles - 10;
-  height = (options::screenHeight - 20) / options::tiles - 10;
-
-  x = 0;
-  y = 0;
-  xPos = 10 + x * width + x * 10 + 10 / 2;
-  yPos = 10 + y * height + y * 10 + 10 / 2;
-  color = {0x00F, 0x00, 0x00, 0xFF};
-
-  fillRect = {xPos, yPos, width, height};
-}
-
-void tile::setX(int x) {
-  this->x = x;
-  // cout << this->x << endl;
-  xPos = 10 + x * width + x * 10 + 10 / 2;
-  fillRect = {xPos, yPos, width, height};
-}
-
-void tile::setY(int y) {
-  this->y = y;
-  // cout << this->y << endl;
-  yPos = 10 + y * width + y * 10 + 10 / 2;
-  fillRect = {xPos, yPos, width, height};
-}
-
-void tile::refresh_render() {
-  SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-  SDL_RenderClear(renderer);
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  SDL_RenderFillRect(renderer, &fillRect);
-  SDL_RenderPresent(renderer);
-}
-void tile::render() {
-  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-  SDL_RenderFillRect(renderer, &fillRect);
 }
 
 void tile::set_value(int value) {
   this->value = value;
   set_color(value);
 }
+
+void tile::render() {
+  if (value > 0) {
+    SDL_Surface *textSurface = TTF_RenderText_Shaded(
+        font, std::to_string(value).c_str(), textColor, color);
+    if (textSurface == NULL) {
+      cout << "Unable to create surface from text! TTF Error: "
+           << TTF_GetError() << endl;
+    } else {
+      SDL_Texture *textTexture =
+          SDL_CreateTextureFromSurface(renderer, textSurface);
+      if (textTexture == NULL) {
+        cout << "Unable to create texture! TTF Error: " << TTF_GetError()
+             << endl;
+      } else {
+        if (textSurface->w > textSurface->h) {
+          textRect = {xPos, yPos, width,
+                      (int)(((float)width / (float)textSurface->w) *
+                            (float)textSurface->h)};
+        } else {
+          int wid = (int)(((float)height / (float)textSurface->h) *
+                          (float)textSurface->w);
+          textRect = {xPos + (width - wid) / 2, yPos, wid, height};
+        }
+        SDL_FreeSurface(textSurface);
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+        SDL_RenderFillRect(renderer, &fillRect);
+        SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+      }
+    }
+  } else {
+    SDL_SetRenderDrawColor(renderer, colors::black.r, colors::black.g,
+                           colors::black.b, colors::black.a);
+    SDL_RenderFillRect(renderer, &fillRect);
+  }
+}
+
 void tile::set_color(int value) {
   switch (value) {
   case 0:
     color = colors::black;
+    textColor = colors::white;
     break;
   case 2:
     color = colors::red;
+    textColor = colors::white;
     break;
   case 4:
     color = colors::orange;
+    textColor = colors::white;
     break;
   case 8:
     color = colors::yellow;
+    textColor = colors::black;
     break;
   case 16:
     color = colors::green;
+    textColor = colors::white;
     break;
   case 32:
     color = colors::blue;
+    textColor = colors::white;
     break;
   case 64:
     color = colors::indigo;
+    textColor = colors::white;
     break;
   case 128:
     color = colors::violet;
+    textColor = colors::white;
+    break;
+  default:
+    color = colors::white;
+    textColor = colors::black;
     break;
   }
-}
-
-void tile::tile_up() {
-  SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-  SDL_RenderClear(renderer);
-  setY(y - 1);
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  SDL_RenderFillRect(renderer, &fillRect);
-  SDL_RenderPresent(renderer);
-}
-
-void tile::tile_down() {
-  SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-  SDL_RenderClear(renderer);
-  setY(y + 1);
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  SDL_RenderFillRect(renderer, &fillRect);
-  SDL_RenderPresent(renderer);
-}
-
-void tile::tile_left() {
-  SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-  SDL_RenderClear(renderer);
-  setX(x - 1);
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  SDL_RenderFillRect(renderer, &fillRect);
-  SDL_RenderPresent(renderer);
-}
-
-void tile::tile_right() {
-  SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-  SDL_RenderClear(renderer);
-  setX(x + 1);
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  SDL_RenderFillRect(renderer, &fillRect);
-  SDL_RenderPresent(renderer);
 }
