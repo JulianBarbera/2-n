@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.cpp tile.cpp
+OBJS = main.cpp tile.cpp SDL_io.cpp Tile_man.cpp File_man.cpp
 
 #CC specifies which compiler we're using
 CC = g++
@@ -22,4 +22,4 @@ debug : $(OBJS)
 	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME) -g
 
 clean :
-	rm 2-n
+	rm 2-n 2nData.dat

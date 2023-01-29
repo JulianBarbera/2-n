@@ -1,15 +1,11 @@
 #include "tile.h"
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_surface.h>
-#include <SDL2/SDL_ttf.h>
-#include <string>
 
 tile::tile() {} // This guy is just used to create an empty object
 
-tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y) {
+tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int val) {
 
   this->renderer = renderer;
-  value = 0;
+  set_value(val);
   // Tile size = (screen size - outer padding) / #tiles - tile padding
   width = (options::screenWidth - 50) / options::tiles - 10;
   height = (options::screenHeight - 50) / options::tiles - 10;
@@ -19,8 +15,6 @@ tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y) {
   // Left outer padding + #x * tile width + #tile * tile padding + offset
   xPos = 25 + x * width + x * 10 + 5;
   yPos = 25 + y * height + y * 10 + 25;
-  color = colors::black;
-  textColor = colors::white;
   this->font = font;
   fillRect = {xPos, yPos, width, height};
 }
@@ -41,7 +35,7 @@ void tile::render() {
       SDL_Texture *textTexture =
           SDL_CreateTextureFromSurface(renderer, textSurface);
       if (textTexture == NULL) {
-        cout << "Unable to create texture! TTF Error: " << TTF_GetError()
+        cout << "Unable to create text texture! TTF Error: " << TTF_GetError()
              << endl;
       } else {
         if (textSurface->w > textSurface->h) {

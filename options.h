@@ -1,3 +1,5 @@
+
+#pragma once
 class options {
 public:
   const static constexpr int screenWidth = 720;
