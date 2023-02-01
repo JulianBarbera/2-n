@@ -1,5 +1,6 @@
 #include "File_man.h"
 #include "SDL_io.h"
+#include <cstdint>
 
 int main(int argc, char *args[]) {
   SDL_io SDL_io_o;

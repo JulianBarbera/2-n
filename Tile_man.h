@@ -21,7 +21,7 @@ public:
   tile tiles[options::tiles]
             [options::tiles]; // Object array to store the game board
   int overload;               // Used to stop the rng
-  int score;                  // Stores the merge score
+  uint64_t score;             // Stores the merge score
   SDL_Renderer *renderer;
   TTF_Font *font;
 

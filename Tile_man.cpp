@@ -38,7 +38,7 @@ void Tile_man::add_tile() {
   int randY = rand() % options::tiles;
   cout << "rand val = " << randX << endl;
   if (tiles[randX][randY].value == 0) {
-    tiles[randX][randY].tile::set_value(2);
+    tiles[randX][randY].tile::set_value(1);
     overload = 0;
   } else if (overload < options::tiles * options::tiles) {
     overload++;
@@ -73,10 +73,11 @@ void Tile_man::sort(int direction) {
       if (col_agg(i)) {
         for (int j = 0; j < options::tiles; j++) {
           for (int k = 0; k < options::tiles - 1; k++) {
-            if (tiles[i][k].value == tiles[i][k + 1].value) {
-              tiles[i][k].tile::set_value(tiles[i][k].value * 2);
+            if (tiles[i][k].value == tiles[i][k + 1].value &&
+                tiles[i][k].value != 0) {
+              tiles[i][k].tile::set_value(tiles[i][k].value + 1);
               tiles[i][k + 1].tile::set_value(0);
-              score += tiles[i][k].value;
+              score += std::pow(2, tiles[i][k].value);
             } else if (tiles[i][k].value == 0 && tiles[i][k + 1].value > 0) {
               tiles[i][k].tile::set_value(tiles[i][k + 1].value);
               tiles[i][k + 1].tile::set_value(0);
@@ -93,10 +94,11 @@ void Tile_man::sort(int direction) {
       if (row_agg(i)) {
         for (int j = 0; j < options::tiles; j++) {
           for (int k = 0; k < options::tiles - 1; k++) {
-            if (tiles[k][i].value == tiles[k + 1][i].value) {
-              tiles[k][i].tile::set_value(tiles[k][i].value * 2);
+            if (tiles[k][i].value == tiles[k + 1][i].value &&
+                tiles[k][i].value != 0) {
+              tiles[k][i].tile::set_value(tiles[k][i].value + 1);
               tiles[k + 1][i].tile::set_value(0);
-              score += tiles[k][i].value;
+              score += std::pow(2, tiles[k][i].value);
             } else if (tiles[k][i].value == 0 && tiles[k + 1][i].value > 0) {
               tiles[k][i].tile::set_value(tiles[k + 1][i].value);
               tiles[k + 1][i].tile::set_value(0);
@@ -113,11 +115,12 @@ void Tile_man::sort(int direction) {
         for (int j = 0; j < options::tiles; j++) {
           for (int k = 0; k < options::tiles - 1; k++) {
             if (tiles[i][options::tiles - 1 - k].value ==
-                tiles[i][options::tiles - 1 - k - 1].value) {
+                    tiles[i][options::tiles - 1 - k - 1].value &&
+                tiles[i][options::tiles - 1 - k].value != 0) {
               tiles[i][options::tiles - k - 1].tile::set_value(
-                  tiles[i][options::tiles - k - 1].value * 2);
+                  tiles[i][options::tiles - k - 1].value + 1);
               tiles[i][options::tiles - 1 - k - 1].tile::set_value(0);
-              score += tiles[i][options::tiles - 1 - k].value;
+              score += std::pow(2, tiles[i][options::tiles - 1 - k].value);
             } else if (tiles[i][options::tiles - 1 - k].value == 0 &&
                        tiles[i][options::tiles - 1 - k - 1].value > 0) {
               tiles[i][options::tiles - 1 - k].tile::set_value(
@@ -136,11 +139,12 @@ void Tile_man::sort(int direction) {
         for (int j = 0; j < options::tiles; j++) {
           for (int k = 0; k < options::tiles - 1; k++) {
             if (tiles[options::tiles - 1 - k][i].value ==
-                tiles[options::tiles - 1 - k - 1][i].value) {
+                    tiles[options::tiles - 1 - k - 1][i].value &&
+                tiles[options::tiles - 1 - k][i].value != 0) {
               tiles[options::tiles - k - 1][i].tile::set_value(
-                  tiles[options::tiles - k - 1][i].value * 2);
+                  tiles[options::tiles - k - 1][i].value + 1);
               tiles[options::tiles - 1 - k - 1][i].tile::set_value(0);
-              score += tiles[options::tiles - 1 - k][i].value;
+              score += std::pow(2, tiles[options::tiles - 1 - k][i].value);
             } else if (tiles[options::tiles - 1 - k][i].value == 0 &&
                        tiles[options::tiles - 1 - k - 1][i].value > 0) {
               tiles[options::tiles - 1 - k][i].tile::set_value(

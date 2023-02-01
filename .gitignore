@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+2-n
+
+# Data file, I guess
+2nData.dat

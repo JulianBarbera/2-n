@@ -1,4 +1,5 @@
 #include "SDL_io.h"
+#include <cmath>
 
 SDL_io::SDL_io(){};
 
@@ -109,7 +110,7 @@ void SDL_io::agg_score() {
   for (int i = 0; i < options::tiles; i++) {
     score += Tile_man_o.row_agg(i);
   }
-  std::string scoreText = "Score: " + std::to_string(score);
+  std::string scoreText = "Score: " + std::to_string(score * 2);
   SDL_Surface *textSurface = TTF_RenderText_Shaded(
       font, scoreText.c_str(), colors::white, colors::black);
   if (textSurface == NULL) {

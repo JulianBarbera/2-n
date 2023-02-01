@@ -2,7 +2,7 @@
 
 tile::tile() {} // This guy is just used to create an empty object
 
-tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int val) {
+tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y, uint8_t val) {
 
   this->renderer = renderer;
   set_value(val);
@@ -16,10 +16,11 @@ tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int val) {
   xPos = 25 + x * width + x * 10 + 5;
   yPos = 25 + y * height + y * 10 + 25;
   this->font = font;
-  fillRect = {xPos, yPos, width, height};
+  innerRect = {xPos + 5, yPos + 5, width - 10, height - 10};
+  outerRect = {xPos, yPos, width, height};
 }
 
-void tile::set_value(int value) {
+void tile::set_value(uint8_t value) {
   this->value = value;
   set_color(value);
 }
@@ -27,7 +28,8 @@ void tile::set_value(int value) {
 void tile::render() {
   if (value > 0) {
     SDL_Surface *textSurface = TTF_RenderText_Shaded(
-        font, std::to_string(value).c_str(), textColor, color);
+        font, std::to_string((int)std::pow(2, value)).c_str(), textColor,
+        innerColor);
     if (textSurface == NULL) {
       cout << "Unable to create surface from text! TTF Error: "
            << TTF_GetError() << endl;
@@ -39,64 +41,39 @@ void tile::render() {
              << endl;
       } else {
         if (textSurface->w > textSurface->h) {
-          textRect = {xPos, yPos, width,
-                      (int)(((float)width / (float)textSurface->w) *
+          textRect = {xPos + 5, yPos + 5, width - 10,
+                      (int)(((float)(width - 10) / (float)textSurface->w) *
                             (float)textSurface->h)};
         } else {
-          int wid = (int)(((float)height / (float)textSurface->h) *
+          int wid = (int)(((float)(height - 10) / (float)textSurface->h) *
                           (float)textSurface->w);
-          textRect = {xPos + (width - wid) / 2, yPos, wid, height};
+          textRect = {xPos + ((width - 10) - wid) / 2 + 5, yPos + 5, wid,
+                      (height - 10)};
         }
         SDL_FreeSurface(textSurface);
-        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-        SDL_RenderFillRect(renderer, &fillRect);
+        SDL_SetRenderDrawColor(renderer, outerColor.r, outerColor.g,
+                               outerColor.b, outerColor.a);
+        SDL_RenderFillRect(renderer, &outerRect);
+        SDL_SetRenderDrawColor(renderer, innerColor.r, innerColor.g,
+                               innerColor.b, innerColor.a);
+        SDL_RenderFillRect(renderer, &innerRect);
         SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
       }
     }
   } else {
     SDL_SetRenderDrawColor(renderer, colors::black.r, colors::black.g,
                            colors::black.b, colors::black.a);
-    SDL_RenderFillRect(renderer, &fillRect);
+    SDL_RenderFillRect(renderer, &outerRect);
   }
 }
 
-void tile::set_color(int value) {
-  switch (value) {
-  case 0:
-    color = colors::black;
-    textColor = colors::white;
-    break;
-  case 2:
-    color = colors::red;
-    textColor = colors::white;
-    break;
-  case 4:
-    color = colors::orange;
-    textColor = colors::white;
-    break;
-  case 8:
-    color = colors::yellow;
-    textColor = colors::black;
-    break;
-  case 16:
-    color = colors::green;
-    textColor = colors::white;
-    break;
-  case 32:
-    color = colors::blue;
-    textColor = colors::white;
-    break;
-  case 64:
-    color = colors::indigo;
-    textColor = colors::white;
-    break;
-  case 128:
-    color = colors::violet;
-    textColor = colors::white;
-    break;
-  default:
-    color = colors::white;
-    textColor = colors::black;
-    break;
+void tile::set_color(uint8_t value) {
+  int row = value % 8;
+  int col = 0;
+  if (value >= 8) {
+    col = (value - row) / 8;
   }
+  innerColor = colors::colorArray[row];
+  textColor = colors::textColorArray[row];
+  outerColor = colors::colorArray[col];
 }

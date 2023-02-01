@@ -16,4 +16,10 @@ public:
   static constexpr SDL_Color violet = {0x8F, 0x00, 0xFF, 0xFF};
   static constexpr SDL_Color black = {0x00, 0x00, 0x00, 0xFF};
   static constexpr SDL_Color transparent = {0x00, 0x00, 0x00, 0x00};
+
+  static constexpr SDL_Color colorArray[] = {white, red,  orange, yellow,
+                                             green, blue, indigo, violet};
+
+  static constexpr SDL_Color textColorArray[] = {black, white, white, black,
+                                                 white, white, white, white};
 };
