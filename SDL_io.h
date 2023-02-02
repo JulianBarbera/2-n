@@ -20,6 +20,7 @@ public:
   void render_all();
   void agg_score();   // Calculates and displayes total aggregate score
   void merge_score(); // Calculates and displays aggregate of merge values
+  void resize_tiles();
 
   // Key press surface constants
   enum keyPressSurfaces {
@@ -38,6 +39,9 @@ public:
   TTF_Font *font;
 
   bool quit;
+
+  int screenWidth;
+  int screenHeight;
 
 private:
   Tile_man Tile_man_o;

@@ -1,4 +1,6 @@
 #include "SDL_io.h"
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_video.h>
 #include <cmath>
 
 SDL_io::SDL_io(){};
@@ -44,6 +46,15 @@ int SDL_io::run() {
           default:
             break;
           }
+        } else if (e.type == SDL_WINDOWEVENT) {
+          switch (e.window.event) {
+          case SDL_WINDOWEVENT_SIZE_CHANGED:
+            screenWidth = e.window.data1;
+            screenHeight = e.window.data2;
+            cout << screenWidth << " " << screenHeight << endl;
+            resize_tiles();
+            break;
+          }
         }
       }
     }
@@ -60,10 +71,14 @@ bool SDL_io::init() {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     cout << "SDL could not initialize! SDL_Error:\n" << SDL_GetError() << endl;
   } else {
+    screenWidth = options::screenWidth;
+    screenHeight = options::screenHeight;
     // Create the window
-    window = SDL_CreateWindow("2^n", SDL_WINDOWPOS_UNDEFINED,
-                              SDL_WINDOWPOS_UNDEFINED, options::screenWidth,
-                              options::screenHeight, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(
+        "2^n", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth,
+        screenHeight,
+        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_SetWindowMinimumSize(window, 420, 420);
     if (window == NULL) {
       cout << "Window could not be created! SDL_Error:\n"
            << SDL_GetError() << endl;
@@ -160,7 +175,7 @@ void SDL_io::merge_score() {
       cout << "Failed to create texture from surface! TTF Error: "
            << TTF_GetError() << endl;
     } else {
-      SDL_Rect textRect = {options::screenWidth - textSurface->w / 2 - 5, 0,
+      SDL_Rect textRect = {screenWidth - textSurface->w / 2 - 5, 0,
                            textSurface->w / 2, textSurface->h / 2};
       SDL_FreeSurface(textSurface);
       SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
@@ -168,4 +183,17 @@ void SDL_io::merge_score() {
       SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
     }
   }
+}
+
+void SDL_io::resize_tiles() {
+  SDL_RenderClear(renderer);
+  for (int i = 0; i < options::tiles; i++) {
+    for (int j = 0; j < options::tiles; j++) {
+      Tile_man_o.tiles[i][j].set_size(screenWidth, screenHeight);
+      Tile_man_o.render_tile(i, j);
+    }
+  }
+  SDL_io::agg_score();
+  SDL_io::merge_score();
+  SDL_RenderPresent(renderer);
 }

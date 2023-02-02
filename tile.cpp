@@ -77,3 +77,22 @@ void tile::set_color(uint8_t value) {
   textColor = colors::textColorArray[row];
   outerColor = colors::colorArray[col];
 }
+
+void tile::set_size(int screenWidth, int screenHeight) {
+  if (screenWidth > screenHeight) {
+    width = (screenHeight - 50) / options::tiles - 10;
+    height = (screenHeight - 50) / options::tiles - 10;
+    offset = (screenWidth - screenHeight) / 2;
+    xPos = 25 + x * width + x * 10 + 5 + offset;
+    yPos = 25 + y * height + y * 10 + 25;
+  } else {
+    width = (screenWidth - 50) / options::tiles - 10;
+    height = (screenWidth - 50) / options::tiles - 10;
+    offset = (screenHeight - screenWidth) / 2;
+    xPos = 25 + x * width + x * 10 + 5;
+    yPos = 25 + y * height + y * 10 + 25 + offset;
+  }
+
+  innerRect = {xPos + 5, yPos + 5, width - 10, height - 10};
+  outerRect = {xPos, yPos, width, height};
+}

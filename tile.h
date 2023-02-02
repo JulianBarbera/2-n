@@ -21,6 +21,7 @@ public:
   int y;
   int xPos;
   int yPos;
+  int offset;
   SDL_Rect innerRect;
   SDL_Rect outerRect;
   SDL_Rect textRect;
@@ -33,6 +34,8 @@ public:
   void render();
   void set_value(uint8_t value);
   void set_color(uint8_t value);
+
+  void set_size(int screenWidth, int screenHeight);
 
 private:
   int width;
