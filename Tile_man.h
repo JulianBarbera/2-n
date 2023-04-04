@@ -18,7 +18,7 @@ public:
                             // squashes when necissary
   void write_board();
   void add_score(int val);
-  tile tiles[8][8]; // Object array to store the game board
+  tile tiles[32][32]; // Object array to store the game board
   uint16_t boardSize;
   int overload;   // Used to stop the rng
   uint64_t score; // Stores the merge score
