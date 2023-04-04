@@ -2,12 +2,13 @@
 #include "SDL_io.h"
 #include <args.hxx>
 #include <cstdint>
+#include <string>
 
 int main(int argc, char **args) {
   args::ArgumentParser parser("2n - A very large 2048 clone",
                               "2n Dev by Julian Barbera");
   args::HelpFlag help(parser, "help", "Display this help menue", {'h', "flag"});
-  args::ValueFlag<uint8_t> newGame(
+  args::ValueFlag<uint64_t> newGame(
       parser, "size", "Makes a new game with a specific board size",
       {'n', "new"});
   args::CompletionFlag completion(parser, {"complete"});
@@ -32,6 +33,5 @@ int main(int argc, char **args) {
   }
 
   SDL_io SDL_io_o;
-  return SDL_io_o.run();
-  return 0;
+  return SDL_io_o.run(args::get(newGame));
 }

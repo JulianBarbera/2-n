@@ -2,13 +2,15 @@
 
 tile::tile() {} // This guy is just used to create an empty object
 
-tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y, uint8_t val) {
+tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y, uint8_t val,
+           int boardSize) {
 
   this->renderer = renderer;
   set_value(val);
+  this->boardSize = boardSize;
   // Tile size = (screen size - outer padding) / #tiles - tile padding
-  width = (options::screenWidth - 50) / options::tiles - 10;
-  height = (options::screenHeight - 50) / options::tiles - 10;
+  width = (options::screenWidth - 50) / boardSize - 10;
+  height = (options::screenHeight - 50) / boardSize - 10;
 
   this->x = x;
   this->y = y;
@@ -80,14 +82,14 @@ void tile::set_color(uint8_t value) {
 
 void tile::set_size(int screenWidth, int screenHeight) {
   if (screenWidth > screenHeight) {
-    width = (screenHeight - 50) / options::tiles - 10;
-    height = (screenHeight - 50) / options::tiles - 10;
+    width = (screenHeight - 50) / boardSize - 10;
+    height = (screenHeight - 50) / boardSize - 10;
     offset = (screenWidth - screenHeight) / 2;
     xPos = 25 + x * width + x * 10 + 5 + offset;
     yPos = 25 + y * height + y * 10 + 25;
   } else {
-    width = (screenWidth - 50) / options::tiles - 10;
-    height = (screenWidth - 50) / options::tiles - 10;
+    width = (screenWidth - 50) / boardSize - 10;
+    height = (screenWidth - 50) / boardSize - 10;
     offset = (screenHeight - screenWidth) / 2;
     xPos = 25 + x * width + x * 10 + 5;
     yPos = 25 + y * height + y * 10 + 25 + offset;

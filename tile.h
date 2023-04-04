@@ -14,7 +14,8 @@ using std::endl;
 class tile {
 public:
   tile();
-  tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y, uint8_t val);
+  tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y, uint8_t val,
+       int boardSize);
 
   uint8_t value;
   int x;
@@ -22,6 +23,7 @@ public:
   int xPos;
   int yPos;
   int offset;
+  int boardSize;
   SDL_Rect innerRect;
   SDL_Rect outerRect;
   SDL_Rect textRect;

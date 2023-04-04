@@ -14,7 +14,7 @@ using std::endl;
 class SDL_io {
 public:
   SDL_io();
-  int run();
+  int run(int boardSize);
   bool init();  // Initialized SDL
   void close(); // Shuts down SDL
   void render_all();
@@ -42,6 +42,7 @@ public:
 
   int screenWidth;
   int screenHeight;
+  int boardSize;
 
 private:
   Tile_man Tile_man_o;

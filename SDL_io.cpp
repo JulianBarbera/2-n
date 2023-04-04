@@ -5,12 +5,13 @@
 
 SDL_io::SDL_io(){};
 
-int SDL_io::run() {
+int SDL_io::run(int boardSize) {
+  this->boardSize = boardSize;
   if (init()) {
     cout << "Failed to initialize!" << endl;
   } else {
     quit = false;
-    Tile_man_o.tile_set(renderer, font);
+    Tile_man_o.tile_set(renderer, font, boardSize);
     render_all();
     while (!quit) {
       usleep(10000);
@@ -122,7 +123,7 @@ void SDL_io::close() {
 
 void SDL_io::agg_score() {
   int score = 0;
-  for (int i = 0; i < options::tiles; i++) {
+  for (int i = 0; i < boardSize; i++) {
     score += Tile_man_o.row_agg(i);
   }
   std::string scoreText = "Score: " + std::to_string(score * 2);
@@ -150,8 +151,8 @@ void SDL_io::agg_score() {
 void SDL_io::render_all() {
   cout << "Rendering all tiles" << endl;
   Tile_man_o.add_tile();
-  for (int i = 0; i < options::tiles; i++) {
-    for (int j = 0; j < options::tiles; j++) {
+  for (int i = 0; i < boardSize; i++) {
+    for (int j = 0; j < boardSize; j++) {
 
       Tile_man_o.render_tile(i, j);
     }
@@ -187,13 +188,13 @@ void SDL_io::merge_score() {
 
 void SDL_io::resize_tiles() {
   SDL_RenderClear(renderer);
-  for (int i = 0; i < options::tiles; i++) {
-    for (int j = 0; j < options::tiles; j++) {
+  for (int i = 0; i < boardSize; i++) {
+    for (int j = 0; j < boardSize; j++) {
       Tile_man_o.tiles[i][j].set_size(screenWidth, screenHeight);
       Tile_man_o.render_tile(i, j);
     }
   }
-  SDL_io::agg_score();
-  SDL_io::merge_score();
+  agg_score();
+  merge_score();
   SDL_RenderPresent(renderer);
 }
