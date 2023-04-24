@@ -6,7 +6,11 @@
 SDL_io::SDL_io(){};
 
 int SDL_io::run(int boardSize) {
-  this->boardSize = boardSize;
+  if (boardSize < 2) {
+    this->boardSize = 8;
+  } else {
+    this->boardSize = boardSize;
+  }
   if (init()) {
     cout << "Failed to initialize!" << endl;
   } else {
