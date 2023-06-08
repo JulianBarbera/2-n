@@ -6,18 +6,20 @@ tile::tile(SDL_Renderer *renderer, TTF_Font *font, int x, int y, uint8_t val,
            int boardSize) {
 
   this->renderer = renderer;
+  this->font = font;
+  this->x = x;
+  this->y = y;
   set_value(val);
   this->boardSize = boardSize;
+
   // Tile size = (screen size - outer padding) / #tiles - tile padding
   width = (options::screenWidth - 50) / boardSize - 10;
   height = (options::screenHeight - 50) / boardSize - 10;
 
-  this->x = x;
-  this->y = y;
+  
   // Left outer padding + #x * tile width + #tile * tile padding + offset
   xPos = 25 + x * width + x * 10 + 5;
   yPos = 25 + y * height + y * 10 + 25;
-  this->font = font;
   innerRect = {xPos + 5, yPos + 5, width - 10, height - 10};
   outerRect = {xPos, yPos, width, height};
 }
