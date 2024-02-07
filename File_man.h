@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 #include "options.h"
 #include <fstream>  // File RW
 #include <iostream> // For logging to console
